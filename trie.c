@@ -1,14 +1,8 @@
+#include "trie.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <stdbool.h>
 
-// Defining the trie node structure
-#define ALPHABET_SIZE 26
-typedef struct TrieNode {
-    struct TrieNode* children[ALPHABET_SIZE]; // Array to store child nodes (one for each letter)
-    bool isEndOfWord; // Flag to mark end of a valid word
-} TrieNode;
 
 // Function to create a new trie node
 TrieNode* createNode() {
@@ -138,6 +132,7 @@ void freeTrie(TrieNode* root) {
         freeTrie(root->children[i]); // Recursively free child nodes
     }
     free(root); // Free current node
+<<<<<<< HEAD
 }
 
 // Main function to demonstrate trie functionalities
@@ -166,3 +161,6 @@ int main() {
     freeTrie(root);
     return 0;
 }
+=======
+}
+>>>>>>> c44c312 (Refactor trie into header and source files)
