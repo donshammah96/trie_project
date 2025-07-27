@@ -1,6 +1,4 @@
-<<<<<<< HEAD
-# trie_project
-=======
+
 # Trie-Based String Operations System
 
 A C implementation of a trie (prefix tree) data structure that provides autocomplete functionality, spell checking, and word prediction capabilities.
@@ -177,4 +175,4 @@ Feel free to fork this project and implement any of the suggested improvements. 
 ## License
 
 This project is open source and available for educational purposes.
->>>>>>> 67c0bda (Refactor trie into header and source files)
+
