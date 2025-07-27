@@ -1,7 +1,11 @@
 #include "trie.h"
+#ifndef ALPHABET_SIZE
+#define ALPHABET_SIZE 26
+#endif
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <stdbool.h>
 
 
 // Function to create a new trie node
