@@ -1,31 +1,8 @@
 #include "trie.h"
-#include <ctype.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 
-#define ALPHABET_SIZE 52  // 26 lowercase + 26 uppercase
-
-// Helper function to convert character to index
-// a-z: 0-25, A-Z: 26-51
-int charToIndex(char ch) {
-    if (ch >= 'a' && ch <= 'z') {
-        return ch - 'a';
-    } else if (ch >= 'A' && ch <= 'Z') {
-        return ch - 'A' + 26;
-    }
-    return -1;  // Invalid character
-}
-
-// Helper function to convert index back to character
-char indexToChar(int index) {
-    if (index >= 0 && index < 26) {
-        return 'a' + index;
-    } else if (index >= 26 && index < 52) {
-        return 'A' + (index - 26);
-    }
-    return '\0';  // Invalid index
-}
 
 // Function to create a new trie node
 TrieNode* createNode() {
@@ -43,10 +20,9 @@ TrieNode* createNode() {
 void insert(TrieNode* root, const char* word) {
     TrieNode* current = root;
     for (int i = 0; word[i] != '\0'; i++) {
-        int index = charToIndex(word[i]);
-        if (index == -1) continue;  // Skip invalid characters
-        
-        if (current->children[index] == NULL) {
+        int index = tolower(word[i]) - 'a'; // Convert to lowercase
+        if (index < 0 || index >= ALPHABET_SIZE) continue;
+        if (!current->children[index]) {
             current->children[index] = createNode();
         }
         current = current->children[index];
@@ -58,13 +34,13 @@ void insert(TrieNode* root, const char* word) {
 bool search(TrieNode* root, const char* word) {
     TrieNode* current = root;
     for (int i = 0; word[i] != '\0'; i++) {
-        int index = charToIndex(word[i]);
-        if (index == -1 || current->children[index] == NULL) {
+        int index = word[i] - 'a';
+        if (index < 0 || index >= ALPHABET_SIZE || !current->children[index]) {
             return false; // Word not found or invalid character
         }
         current = current->children[index];
     }
-    return current != NULL && current->isEndOfWord; // Return true if word exists and is complete
+    return current && current->isEndOfWord; // Return true if word exists and is complete
 }
 
 // Helper function for autocomplete: prints all words with a given prefix
@@ -75,7 +51,7 @@ void printWordsWithPrefix(TrieNode* root, char* prefix, int level) {
     }
     for (int i = 0; i < ALPHABET_SIZE; i++) {
         if (root->children[i]) {
-            prefix[level] = indexToChar(i); // Add current character to prefix
+            prefix[level] = i + 'a'; // Add current character to prefix
             printWordsWithPrefix(root->children[i], prefix, level + 1); // Recurse for child nodes
         }
     }
@@ -86,8 +62,8 @@ void autocomplete(TrieNode* root, const char* prefix) {
     TrieNode* current = root;
     // Traverse to the node representing the prefix
     for (int i = 0; prefix[i] != '\0'; i++) {
-        int index = charToIndex(prefix[i]);
-        if (index == -1 || !current->children[index]) {
+        int index = prefix[i] - 'a';
+        if (index < 0 || index >= ALPHABET_SIZE || !current->children[index]) {
             printf("No words found with prefix '%s'\n", prefix);
             return;
         }
@@ -121,14 +97,6 @@ void spellCheck(TrieNode* root, const char* word) {
                 printf("%s\n", suggestion);
             }
         }
-        for (char c = 'A'; c <= 'Z'; c++) {
-            // Insert character c at position i
-            memmove(suggestion + i + 1, suggestion + i, strlen(suggestion) - i + 1);
-            suggestion[i] = c;
-            if (search(root, suggestion)) {
-                printf("%s\n", suggestion);
-            }
-        }
     }
     // Try deletions
     for (int i = 0; i < strlen(word); i++) {
@@ -142,12 +110,6 @@ void spellCheck(TrieNode* root, const char* word) {
     for (int i = 0; i < strlen(word); i++) {
         strcpy(suggestion, word);
         for (char c = 'a'; c <= 'z'; c++) {
-            suggestion[i] = c;
-            if (search(root, suggestion)) {
-                printf("%s\n", suggestion);
-            }
-        }
-        for (char c = 'A'; c <= 'Z'; c++) {
             suggestion[i] = c;
             if (search(root, suggestion)) {
                 printf("%s\n", suggestion);
